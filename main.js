@@ -1,6 +1,8 @@
 var Game = {};
 
 ALIVE_DENSITY = 0.9;
+CHANGE_DIRECTION = 0.7;
+RESET_DIRECTION = 0.9;
 CELL_SIZE = 8;
 MIN_DELAY = 100;
 
@@ -13,8 +15,8 @@ Game.init = function () {
 
     Game.lastTime = (new Date()).getTime();
 
-    Game.height = Math.floor(Game.ctx.canvas.height / CELL_SIZE);
-    Game.width = Math.floor(Game.ctx.canvas.width / CELL_SIZE);
+    Game.height = Math.floor(Game.ctx.canvas.height / CELL_SIZE) * 2;
+    Game.width = Math.floor(Game.ctx.canvas.width / CELL_SIZE) * 2;
 
     /**
      * A game of life field
@@ -25,10 +27,19 @@ Game.init = function () {
      */
     Game.map = [];
 
+    Game.observer = [];
+    Game.observer.vx = 0;
+    Game.observer.vy = 0;
+    Game.observer.x = 0;
+    Game.observer.y = 0;
+
     initializeGameField()
 };
 
 Game.isAlive = function (x, y) {
+    x %= Game.width;
+    y %= Game.height;
+
     if (x < 0) {
         x += Game.width;
     }
@@ -52,10 +63,12 @@ function initializeGameField() {
 }
 
 Game.run = function () {
-    if ((new Date()).getTime() - Game.lastTime > MIN_DELAY) {
+    var dt = (new Date()).getTime() - Game.lastTime;
+
+    if (dt > MIN_DELAY) {
         Game.lastTime = (new Date()).getTime();
 
-        Game.update();
+        Game.update(dt);
         Game.render();
     }
 };
@@ -71,12 +84,16 @@ Game.render = function () {
 
         if (alive === 1) {
             Game.ctx.fillStyle = 'rgb(200, 255, 0)';
-            Game.ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+            Game.ctx.fillRect(
+                (x + Game.observer.x) * CELL_SIZE,
+                (y + Game.observer.y) * CELL_SIZE,
+                CELL_SIZE,
+                CELL_SIZE);
         }
     }
 };
 
-Game.update = function () {
+Game.update = function (dt) {
     function nextMap() {
         nextMap = [];
 
@@ -118,6 +135,26 @@ Game.update = function () {
     }
 
     Game.map = nextMap();
+
+    function moveObserver() {
+        if (Math.random() > CHANGE_DIRECTION) {
+            Game.observer.vx += Math.random() - 0.5;
+            Game.observer.vy += Math.random() - 0.5;
+        }
+
+        if (Math.random() > RESET_DIRECTION) {
+            Game.observer.vx *= Math.random() * 1.5;
+            Game.observer.vy *= Math.random() * 1.5;
+        }
+
+        Game.observer.x += Game.observer.vx * dt / 100;
+        Game.observer.y += Game.observer.vy * dt / 100;
+
+        Game.observer.x %= Game.width;
+        Game.observer.y %= Game.height;
+    }
+
+    moveObserver();
 };
 
 function main() {
