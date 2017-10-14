@@ -1,10 +1,10 @@
 var Game = {};
 
 ALIVE_DENSITY = 0.9;
-CHANGE_DIRECTION = 0.7;
-RESET_DIRECTION = 0.9;
+CHANGE_DIRECTION = 0.99;
+RESET_DIRECTION = 0.8;
 CELL_SIZE = 8;
-MIN_DELAY = 100;
+MIN_DELAY = 200;
 
 Game.init = function () {
     Game.fps = 50;
@@ -15,8 +15,8 @@ Game.init = function () {
 
     Game.lastTime = (new Date()).getTime();
 
-    Game.height = Math.floor(Game.ctx.canvas.height / CELL_SIZE) * 2;
-    Game.width = Math.floor(Game.ctx.canvas.width / CELL_SIZE) * 2;
+    Game.height = Math.floor(Game.ctx.canvas.height / CELL_SIZE);
+    Game.width = Math.floor(Game.ctx.canvas.width / CELL_SIZE);
 
     /**
      * A game of life field
@@ -37,6 +37,9 @@ Game.init = function () {
 };
 
 Game.isAlive = function (x, y) {
+    x = Math.floor(x + 0.5);
+    y = Math.floor(y + 0.5);
+
     x %= Game.width;
     y %= Game.height;
 
@@ -71,24 +74,29 @@ Game.run = function () {
         Game.update(dt);
         Game.render();
     }
+
+    /*function moveObserver() {
+        Game.observer.x += Game.observer.vx * dt / 100;
+        Game.observer.y += Game.observer.vy * dt / 100;
+    }
+
+    moveObserver();*/
 };
 
 Game.render = function () {
     Game.ctx.clearRect(0, 0, Game.canvas.clientWidth, Game.canvas.clientHeight);
 
-    for (var i = 0; i < Game.map.length; i++) {
-        var x = i % Game.width;
-        var y = (i - x) / Game.width;
-
-        var alive = Game.map[i];
-
-        if (alive === 1) {
-            Game.ctx.fillStyle = 'rgb(200, 255, 0)';
-            Game.ctx.fillRect(
-                (x + Game.observer.x) * CELL_SIZE,
-                (y + Game.observer.y) * CELL_SIZE,
-                CELL_SIZE,
-                CELL_SIZE);
+    for (var x = 0; x < Game.width; x++) {
+        for (var y = 0; y < Game.height; y++) {
+            if (Game.isAlive(x + Game.observer.x,
+                    y + Game.observer.y) === 1) {
+                Game.ctx.fillStyle = 'rgb(200, 255, 0)';
+                Game.ctx.fillRect(
+                    (x - Game.observer.x % 1) * CELL_SIZE,
+                    (y - Game.observer.y % 1) * CELL_SIZE,
+                    CELL_SIZE,
+                    CELL_SIZE);
+            }
         }
     }
 };
@@ -135,26 +143,6 @@ Game.update = function (dt) {
     }
 
     Game.map = nextMap();
-
-    function moveObserver() {
-        if (Math.random() > CHANGE_DIRECTION) {
-            Game.observer.vx += Math.random() - 0.5;
-            Game.observer.vy += Math.random() - 0.5;
-        }
-
-        if (Math.random() > RESET_DIRECTION) {
-            Game.observer.vx *= Math.random() * 1.5;
-            Game.observer.vy *= Math.random() * 1.5;
-        }
-
-        Game.observer.x += Game.observer.vx * dt / 100;
-        Game.observer.y += Game.observer.vy * dt / 100;
-
-        Game.observer.x %= Game.width;
-        Game.observer.y %= Game.height;
-    }
-
-    moveObserver();
 };
 
 function main() {
