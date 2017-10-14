@@ -2,17 +2,19 @@ var Game = {};
 
 ALIVE_DENSITY = 0.9;
 CELL_SIZE = 8;
-MIN_DELAY = 1;
+MIN_DELAY = 100;
 
 Game.init = function () {
     Game.fps = 50;
     Game.canvas = document.getElementById('main');
     Game.ctx = Game.canvas.getContext('2d');
+    Game.ctx.canvas.width = window.innerWidth;
+    Game.ctx.canvas.height = window.innerHeight;
 
     Game.lastTime = (new Date()).getTime();
 
-    Game.height = 100;
-    Game.width = 100;
+    Game.height = Math.floor(Game.ctx.canvas.height / CELL_SIZE);
+    Game.width = Math.floor(Game.ctx.canvas.width / CELL_SIZE);
 
     /**
      * A game of life field
