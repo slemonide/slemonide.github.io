@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <script src="main.js"></script>
+    <link rel="stylesheet" href="main.css">
+    <title>Text To Image Converter</title>
+</head>
+<body onload="main();">
+<h1>Convert text to a colored image</h1>
+<p>Rules: Each character is always converted to the same color
+    (but different characters can sometimes have the same color)</p>
+<textarea id="input" title="" cols="50" rows="10">
+011100110110110001100101
+011011010110111101101110
+011010010110010001100101
+</textarea>
+<button onclick="removeSpaces();">Remove Spaces</button>
+<button onclick="turnTextToSquare();">Turn Text to Square</button>
+<button onclick="turnTextToBinary();">Turn Text to Binary</button>
+<canvas id="output" width="300" height="300"></canvas>
+</body>
+</html>
