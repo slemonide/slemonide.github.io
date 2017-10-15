@@ -101,7 +101,7 @@ Game.render = function () {
     }
 };
 
-Game.update = function (dt) {
+Game.update = function () {
     function nextMap() {
         nextMap = [];
 
