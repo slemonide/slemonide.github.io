@@ -19,3 +19,7 @@ canvas {
     max-width: 1000px;
     width: 90%;
 }
+
+.center {
+    text-align: center;
+}

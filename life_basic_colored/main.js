@@ -181,3 +181,8 @@ function main(cellSize, clockSpeed) {
 
     Game._intervalId = setInterval(Game.run, 1000 / Game.fps);
 }
+
+function restart() {
+    Game.map = [];
+    initializeGameField();
+}
