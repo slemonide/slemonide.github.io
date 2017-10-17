@@ -2,15 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <script src="text2img/main.js"></script>
+    <script src="life_basic_colored/main.js"></script>
+    <link rel="stylesheet" href="life_basic_colored/main.css">
+    <link rel="stylesheet" href="bg_canvas.css">
     <title>Fyrz Bavar</title>
 </head>
-<body>
+<body onload="main(4,10);">
+<canvas id="main" width="1000" height="1000"></canvas>
+
+<div class="container">
+    <h1>Welcome!</h1>
+
 <ul>
     <li><a href="life_basic">Basic Game Of Life</a></li>
     <li><a href="life_basic_colored">Basic Game Of Life (colored version)</a></li>
     <li><a href="text2img">Text To Image converter</a></li>
     <li><a href="text2img_colored">Text To Image converter (colored version)</a></li>
 </ul>
+</div>
+
 </body>
 </html>

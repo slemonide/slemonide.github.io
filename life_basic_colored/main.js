@@ -3,8 +3,6 @@ var Game = {};
 ALIVE_DENSITY = 0.87;
 CHANGE_DIRECTION = 0.99;
 RESET_DIRECTION = 0.8;
-CELL_SIZE = 3;
-MIN_DELAY = 100;
 
 Game.init = function () {
     Game.fps = 50;
@@ -15,8 +13,8 @@ Game.init = function () {
 
     Game.lastTime = (new Date()).getTime();
 
-    Game.height = Math.floor(Game.ctx.canvas.height / CELL_SIZE);
-    Game.width = Math.floor(Game.ctx.canvas.width / CELL_SIZE);
+    Game.height = Math.floor(Game.ctx.canvas.height / Game.cellSize);
+    Game.width = Math.floor(Game.ctx.canvas.width / Game.cellSize);
 
     /**
      * A game of life field
@@ -78,7 +76,7 @@ function initializeGameField() {
 Game.run = function () {
     var dt = (new Date()).getTime() - Game.lastTime;
 
-    if (dt > MIN_DELAY) {
+    if (dt > Game.clockSpeed) {
         Game.lastTime = (new Date()).getTime();
 
         Game.update(dt);
@@ -96,10 +94,10 @@ Game.render = function () {
             if (color !== 0) {
                 Game.ctx.fillStyle = 'rgb('+ color[0] +', ' + color[1] + ', ' + color[2] + ')';
                 Game.ctx.fillRect(
-                    (x - Game.observer.x % 1) * CELL_SIZE,
-                    (y - Game.observer.y % 1) * CELL_SIZE,
-                    CELL_SIZE,
-                    CELL_SIZE);
+                    (x - Game.observer.x % 1) * Game.cellSize,
+                    (y - Game.observer.y % 1) * Game.cellSize,
+                    Game.cellSize,
+                    Game.cellSize);
             }
         }
     }
@@ -176,7 +174,9 @@ Game.update = function () {
     Game.map = nextMap();
 };
 
-function main() {
+function main(cellSize, clockSpeed) {
+    Game.cellSize = cellSize;
+    Game.clockSpeed = clockSpeed;
     Game.init();
 
     Game._intervalId = setInterval(Game.run, 1000 / Game.fps);
