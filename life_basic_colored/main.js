@@ -3,8 +3,8 @@ var Game = {};
 ALIVE_DENSITY = 0.87;
 CHANGE_DIRECTION = 0.99;
 RESET_DIRECTION = 0.8;
-CELL_SIZE = 4;
-MIN_DELAY = 200;
+CELL_SIZE = 3;
+MIN_DELAY = 100;
 
 Game.init = function () {
     Game.fps = 50;
