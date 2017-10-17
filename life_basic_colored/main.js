@@ -60,9 +60,9 @@ Game.isAlive = function (x, y) {
 
 function getRandomColor() {
     return [
-        Math.floor(Math.random() * 255),
-        Math.floor(Math.random() * 255),
-        Math.floor(Math.random() * 255)]
+        Math.floor(Math.random() + 0.5) * 255,
+        Math.floor(Math.random() + 0.5) * 255,
+        Math.floor(Math.random() + 0.5) * 255]
 }
 
 function initializeGameField() {
