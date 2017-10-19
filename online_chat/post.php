@@ -1,10 +1,4 @@
 <?php
-
-$message = $_REQUEST["q"];
-
-file_put_contents("log.txt", "<li>$message </li>", FILE_APPEND)
-
-// Go back
-header('Location: index.html');
-
+$text = $_REQUEST["q"];
+file_put_contents("log.txt", "<li>$text</li>", FILE_APPEND)
 ?>
