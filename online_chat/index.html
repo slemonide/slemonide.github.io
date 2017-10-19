@@ -21,20 +21,10 @@
 
 <h1>Chat</h1>
 <div id="log"></div>
-<form>
-    <input type="text" title="" id="message"/>
+<form action="post.php" method="post">
+    Send: <input type="text" name="message" size="30">
+    <input type="submit" value="Submit">
 </form>
-<button type="button" onclick="send()">Send</button>
-
-<script>
-    function send() {
-        var xhttp = new XMLHttpRequest();
-
-        var str = document.getElementById("message").value;
-        xhttp.open("GET", "post.php?q=" + str, true);
-        xhttp.send();
-    }
-</script>
 
 </body>
 </html>

@@ -1,4 +1,6 @@
 <?php
-$text = $_REQUEST["q"];
-file_put_contents("log.txt", $text, FILE_APPEND)
+
+$message = @$_POST["message"];
+
+file_put_contents("log.txt", "<li>$message <\li>", FILE_APPEND)
 ?>
