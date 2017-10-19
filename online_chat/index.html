@@ -15,6 +15,18 @@
             xhttp.open("GET", "log.txt", true);
             xhttp.send();
         }
+
+        function submit() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("log").innerHTML =
+                        this.responseText;
+                }
+            };
+            xhttp.open("GET", "post.php?q=" + document.getElementsByName("message").value, true);
+            xhttp.send();
+        }
     </script>
 </head>
 <body>
@@ -22,8 +34,8 @@
 <h1>Chat</h1>
 <div id="log"></div>
 <form action="post.php" method="post">
-    Send: <input type="text" name="message" size="30">
-    <input type="submit" value="Submit">
+    Send: <input type="text" name="message" id="message" size="30">
+    <input type="button" onclick="submit();" value="Submit">
 </form>
 
 </body>
