@@ -32,7 +32,7 @@
 
         var str = document.getElementById("message").value;
         document.getElementById("message").value = "";
-        xhttp.open("GET", "post.php?q=" + str, true);
+        xhttp.open("POST", "post.php?q=" + str, true);
         xhttp.send();
     }
 </script>
