@@ -2,7 +2,7 @@
 <html>
 <head>
     <script>
-        setInterval(loadDoc, 100);
+        setInterval(loadDoc, 1);
 
         function loadDoc() {
             var xhttp = new XMLHttpRequest();
@@ -20,7 +20,7 @@
 <body>
 
 <h1>Chat</h1>
-<div id="log"></div>
+<ul id="log"></ul>
 <form action="javascript:send();">
     <input type="text" title="" id="message"/>
     <button type="button" onclick="send()">Send</button>
@@ -31,7 +31,7 @@
         var xhttp = new XMLHttpRequest();
 
         var str = document.getElementById("message").value;
-        document.getElementById("message").value = ""
+        document.getElementById("message").value = "";
         xhttp.open("GET", "post.php?q=" + str, true);
         xhttp.send();
     }
