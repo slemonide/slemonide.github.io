@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Online Chat</title>
+    <link rel="stylesheet" href="../life_basic_colored/main.css">
+    <link rel="stylesheet" href="../bg_canvas.css">
     <script>
         setInterval(loadDoc, 1);
 
@@ -15,27 +18,27 @@
             xhttp.open("GET", "log.txt", true);
             xhttp.send();
         }
+
+        function send() {
+            var xhttp = new XMLHttpRequest();
+
+            var str = document.getElementById("message").value;
+            document.getElementById("message").value = "";
+            xhttp.open("POST", "post.php?q=" + encodeURIComponent(str), true);
+            xhttp.send();
+        }
     </script>
 </head>
 <body>
 
+<div class="container">
 <h1>Chat</h1>
 <ul id="log"></ul>
 <form action="javascript:send();">
     <input type="text" title="" id="message"/>
     <button type="button" onclick="send()">Send</button>
 </form>
-
-<script>
-    function send() {
-        var xhttp = new XMLHttpRequest();
-
-        var str = document.getElementById("message").value;
-        document.getElementById("message").value = "";
-        xhttp.open("POST", "post.php?q=" + encodeURIComponent(str), true);
-        xhttp.send();
-    }
-</script>
+</div>
 
 </body>
 </html>
