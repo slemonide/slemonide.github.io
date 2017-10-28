@@ -14,6 +14,18 @@ WHITE_PUCK = 'rgb(240, 240, 240)';
 // ================
 // DATA DEFINITIONS
 
+/*
+ * Vector is array(number)
+ * interp. a vector of arbitrary size
+ */
+
+// Randomly chosen 2d basis
+var b1 = getRandomVector(BOARD_SIZE * BOARD_SIZE);
+var b2 = getRandomVector(BOARD_SIZE * BOARD_SIZE);
+var b3 = getRandomVector(BOARD_SIZE * BOARD_SIZE);
+var b4 = getRandomVector(BOARD_SIZE * BOARD_SIZE);
+var b5 = getRandomVector(BOARD_SIZE * BOARD_SIZE);
+
 // Turn is one of:
 // - "b" -- black
 // - "w" -- white
@@ -25,6 +37,18 @@ var turn = "w";
 // - "w" -- white
 // - "e" -- empty
 // interp. cell state, either a puck of specified color or empty
+
+/*
+function fn_for_cellState(cellState) {
+    if (isBlack(cellState)) {
+        //...
+    } else if (isWhite(cellState)) {
+        //...
+    } else {
+        //...
+    }
+}
+*/
 
 function isBlack(cellState) {
     return (cellState === "b");
@@ -371,6 +395,75 @@ function positionSetToString(set) {
 }
 
 /**
+ * Produce a randomly chosen unit vector of specified size
+ * @param size
+ */
+function getRandomVector(size) {
+    var vector = [];
+
+    for (var i = 0; i < size; i++) {
+        vector.push(Math.random());
+    }
+
+    return vector;
+}
+
+/**
+ * Converts cell state to a number
+ * @param cellState
+ */
+function boardStateToNumber(cellState) {
+    if (isBlack(cellState)) {
+        return 1;
+    } else if (isWhite(cellState)) {
+        return 2;
+    } else {
+        return 0;
+    }
+}
+
+/**
+ * Convert the board to a vector
+ * @param board
+ */
+function boardToVector(board) {
+    var vectorBoard = [];
+
+    for (var i = 0; i < board.length; i++) {
+        vectorBoard.push(boardStateToNumber(board[i]));
+    }
+
+    return vectorBoard;
+}
+
+/**
+ * Compute the dot product between two vectors
+ * ASSUME: vectors are of the same size
+ * @param v1
+ * @param v2
+ */
+function dotProduct(v1, v2) {
+    var productSoFar = 0;
+
+    for (var i = 0; i < v1.length; i++) {
+        productSoFar += v1[i] * v2[i];
+    }
+
+    return productSoFar;
+}
+
+/**
+ * Produce the color string from the given integers, representing color components
+ * REQUIRES: 0 <= r,g,b <= 255
+ * @param r
+ * @param g
+ * @param b
+ */
+function getColor(r, g, b) {
+    return 'rgb('+ r + ', ' + g + ', ' + b + ')';
+}
+
+/**
  * Render the world
  */
 function render() {
@@ -443,8 +536,27 @@ function render() {
         }
     }
 
+    function renderStateMap() {
+        var stateMapCanvas = document.getElementById("stateMap");
+        var stateCtx = stateMapCanvas.getContext('2d');
+
+        // Convert current board state to a vector
+        var brd = boardToVector(currentBoard);
+
+        // Now project the board to our 2d basis
+        var brdX = dotProduct(brd, b1);
+        var brdY = dotProduct(brd, b2);
+        var brdR = Math.floor(dotProduct(brd, b3) * 13 % 255);
+        var brdG = Math.floor(dotProduct(brd, b4) * 31 % 255);
+        var brdB = Math.floor(dotProduct(brd, b5) * 91 % 255);
+
+        stateCtx.fillStyle = getColor(brdR, brdG, brdB);
+        stateCtx.fillRect(brdX * 13, brdY * 13, 3, 3);
+    }
+
     renderBoard();
     renderPucks();
     renderTurn();
     renderPossibleMoves();
+    renderStateMap();
 }
