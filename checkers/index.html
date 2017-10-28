@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="main.js"></script>
+        <link rel="stylesheet" href="main.css">
+        <title>Checkers</title>
+    </head>
+    <body onload="main();">
+
+        <table>
+            <tr>
+                <td>
+                    <canvas id="main" width="512" height="512"></canvas>
+                </td>
+                <td>
+                    <p>Turn: <span id="turn"></span></p>
+                    <button onclick="makeMove()">Make move</button>
+                    <h3>Valid moves</h3>
+                    <p>Total moves possible: <span id="totalMovesPossible"></span></p>
+                    <table id="possibleMoves"></table>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>
