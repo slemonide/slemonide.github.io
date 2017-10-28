@@ -244,8 +244,22 @@ function makeMove() {
  * Updates the world by the given time difference
  * @param dt time difference
  */
+var paused = true;
 function update(dt) {
-    //makeMove();
+    if (!paused) {
+        makeMove();
+    }
+}
+
+function playStop() {
+    paused = !paused;
+
+    var playStopButton = document.getElementById("playStopButton");
+    if (paused) {
+        playStopButton.innerHTML = "Play";
+    } else {
+        playStopButton.innerHTML = "Pause";
+    }
 }
 
 /**
