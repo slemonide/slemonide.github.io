@@ -52,6 +52,17 @@ function getNewBoard() {
         "w", "e", "w", "e", "w", "e", "w", "e"
 
     ]
+    // return [
+    //     "e", "e", "e", "e", "e", "e", "e", "e",
+    //     "e", "e", "e", "e", "e", "e", "e", "e",
+    //     "e", "e", "e", "e", "e", "e", "e", "e",
+    //     "e", "e", "e", "e", "e", "e", "e", "e",
+    //     "e", "e", "e", "e", "e", "b", "e", "e",
+    //     "e", "e", "e", "e", "w", "e", "e", "e",
+    //     "e", "e", "e", "e", "e", "e", "e", "e",
+    //     "e", "e", "e", "e", "e", "e", "e", "e"
+    //
+    // ]
 }
 
 var currentBoard = getNewBoard();
@@ -115,7 +126,7 @@ function tick() {
 
     if (dt > MIN_DELAY) {
         lastTime = (new Date()).getTime();
-        update(dt)
+        update()
     }
 }
 
@@ -137,52 +148,135 @@ function isOnBoard(pos) {
 }
 
 /**
+ * Return false if cell state at pos is either cellState or empty
+ * @param cellState
+ * @param pos
+ */
+function areOppositeColors(cellState, pos) {
+    var brdCellState = currentBoard[posToIndex(pos)];
+
+    if (isEmpty(brdCellState)) {
+        return false;
+    } else if (isWhite(brdCellState)) {
+        return isBlack(cellState);
+    } else if (isBlack(brdCellState)) {
+        return isWhite(cellState);
+    }
+}
+
+/**
  * Produce all valid moves for the current turn
  */
 function getAllValidMoves() {
     var validMoves = [];
+
+    function generateTrivialMoves(pos, cellState) {
+        var add1, add2;
+
+        if (isWhite(cellState)) {
+            add1 = {
+                x: pos.x + 1,
+                y: pos.y - 1
+            };
+
+            add2 = {
+                x: pos.x - 1,
+                y: pos.y - 1
+            };
+        } else {
+            add1 = {
+                x: pos.x + 1,
+                y: pos.y + 1
+            };
+
+            add2 = {
+                x: pos.x - 1,
+                y: pos.y + 1
+            };
+        }
+
+        if (isOnBoard(add1) && isFree(add1)) {
+            validMoves.push({
+                remove: [pos],
+                add: [add1]
+            })
+        }
+
+        if (isOnBoard(add2) && isFree(add2)) {
+            validMoves.push({
+                remove: [pos],
+                add: [add2]
+            })
+        }
+    }
+
+    function generateCapturingMoves(pos, cellState) {
+        var capture1, capture2, add1, add2;
+
+        if (isWhite(cellState)) {
+            capture1 = {
+                x: pos.x + 1,
+                y: pos.y - 1
+            };
+
+            capture2 = {
+                x: pos.x - 1,
+                y: pos.y - 1
+            };
+
+            add1 = {
+                x: pos.x + 2,
+                y: pos.y - 2
+            };
+
+            add2 = {
+                x: pos.x - 2,
+                y: pos.y - 2
+            };
+        } else {
+            capture1 = {
+                x: pos.x + 1,
+                y: pos.y + 1
+            };
+
+            capture2 = {
+                x: pos.x - 1,
+                y: pos.y + 1
+            };
+
+            add1 = {
+                x: pos.x + 2,
+                y: pos.y + 2
+            };
+
+            add2 = {
+                x: pos.x - 2,
+                y: pos.y + 2
+            };
+        }
+
+        if (isOnBoard(add1) && isFree(add1) && areOppositeColors(cellState, capture1)) {
+            validMoves.push({
+                remove: [pos, capture1],
+                add: [add1]
+            })
+        }
+
+        if (isOnBoard(add2) && isFree(add2) && areOppositeColors(cellState, capture2)) {
+            validMoves.push({
+                remove: [pos, capture2],
+                add: [add2]
+            })
+        }
+    }
+
     for (var i = 0; i < currentBoard.length; i++) {
         var cellState = currentBoard[i];
         var pos = indexToPos(i);
 
         if (cellState === turn) {
-            var add1, add2;
-
-            if (isWhite(cellState)) {
-                add1 = {
-                    x: pos.x + 1,
-                    y: pos.y - 1
-                };
-
-                add2 = {
-                    x: pos.x - 1,
-                    y: pos.y - 1
-                };
-            } else {
-                add1 = {
-                    x: pos.x + 1,
-                    y: pos.y + 1
-                };
-
-                add2 = {
-                    x: pos.x - 1,
-                    y: pos.y + 1
-                };
-            }
-
-            if (isOnBoard(add1) && isFree(add1)) {
-                validMoves.push({
-                    remove: [pos],
-                    add: [add1]
-                })
-            }
-
-            if (isOnBoard(add2) && isFree(add2)) {
-                validMoves.push({
-                    remove: [pos],
-                    add: [add2]
-                })
-            }
+            generateTrivialMoves(pos, cellState);
+            generateCapturingMoves(pos, cellState);
         }
     }
 
@@ -245,7 +339,7 @@ function makeMove() {
  * @param dt time difference
  */
 var paused = true;
-function update(dt) {
+function update() {
     if (!paused) {
         makeMove();
     }
