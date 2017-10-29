@@ -5,4 +5,5 @@
 
 table,tr,td {
     vertical-align: top;
+    horiz-align: left;
 }

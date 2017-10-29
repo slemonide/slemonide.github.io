@@ -14,17 +14,21 @@
                     <canvas id="main" width="512" height="512"></canvas>
                 </td>
                 <td>
-                    <canvas id="stateMap" width="512" height="512"></canvas>
-                </td>
-                <td>
                     <p>Turn: <span id="turn"></span></p>
-                    <button onclick="makeMove()">Make move</button>
-                    <button onclick="playStop()" id="playStopButton">Play</button>
+                    <table>
+                        <tr><td>
+                            <button onclick="makeMove()">Make move</button>
+                            <button onclick="playStop()" id="playStopButton">Play</button>
+                        </td></tr>
+                        <tr><td><button onclick="restart()">Restart</button></td></tr>
+                    </table>
                     <h3>Valid moves</h3>
                     <p>Total moves possible: <span id="totalMovesPossible"></span></p>
                     <table id="possibleMoves"></table>
                 </td>
             </tr>
         </table>
+        <h2>State Map</h2>
+        <canvas id="stateMap" width="1024" height="1024"></canvas>
     </body>
 </html>

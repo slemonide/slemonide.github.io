@@ -6,10 +6,10 @@ MIN_DELAY = 200;
 
 BOARD_SIZE = 8;
 CELL_SIZE = 64; // in px
-WHITE_CELL_COLOR = 'rgb(200, 255, 200)';
-DARK_CELL_COLOR = 'rgb(100, 155, 100)';
-BLACK_PUCK = 'rgb(10, 10, 10)';
-WHITE_PUCK = 'rgb(240, 240, 240)';
+WHITE_CELL_COLOR = getColor(200, 255, 200);
+DARK_CELL_COLOR = getColor(100, 155, 100);
+BLACK_PUCK = getColor(10, 10, 10);
+WHITE_PUCK = getColor(240, 240, 240);
 
 // ================
 // DATA DEFINITIONS
@@ -22,9 +22,6 @@ WHITE_PUCK = 'rgb(240, 240, 240)';
 // Randomly chosen 2d basis
 var b1 = getRandomVector(BOARD_SIZE * BOARD_SIZE);
 var b2 = getRandomVector(BOARD_SIZE * BOARD_SIZE);
-var b3 = getRandomVector(BOARD_SIZE * BOARD_SIZE);
-var b4 = getRandomVector(BOARD_SIZE * BOARD_SIZE);
-var b5 = getRandomVector(BOARD_SIZE * BOARD_SIZE);
 
 // Turn is one of:
 // - "b" -- black
@@ -380,6 +377,10 @@ function playStop() {
     }
 }
 
+function restart() {
+    currentBoard = getNewBoard();
+}
+
 /**
  * Convert a position set to string
  * @param set
@@ -464,6 +465,20 @@ function getColor(r, g, b) {
 }
 
 /**
+ * Produce the norm of a vector
+ * @param vec
+ */
+function norm(vec) {
+    var squareSum = 0;
+
+    for (var i = 0; i < vec.length; i++) {
+        squareSum += vec[i] * vec[i];
+    }
+
+    return Math.sqrt(squareSum);
+}
+
+/**
  * Render the world
  */
 function render() {
@@ -544,14 +559,11 @@ function render() {
         var brd = boardToVector(currentBoard);
 
         // Now project the board to our 2d basis
-        var brdX = dotProduct(brd, b1);
-        var brdY = dotProduct(brd, b2);
-        var brdR = Math.floor(dotProduct(brd, b3) * 13 % 255);
-        var brdG = Math.floor(dotProduct(brd, b4) * 31 % 255);
-        var brdB = Math.floor(dotProduct(brd, b5) * 91 % 255);
+        var brdX = dotProduct(brd, b1) / (norm(brd) * norm(b1));
+        var brdY = dotProduct(brd, b2) / (norm(brd) * norm(b1));
 
-        stateCtx.fillStyle = getColor(brdR, brdG, brdB);
-        stateCtx.fillRect(brdX * 13, brdY * 13, 3, 3);
+        stateCtx.fillStyle = 'red';
+        stateCtx.fillRect(brdX * stateMapCanvas.width, brdY * stateMapCanvas.height, 2, 2);
     }
 
     renderBoard();
