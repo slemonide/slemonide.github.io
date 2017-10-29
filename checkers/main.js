@@ -2,7 +2,7 @@
 // CONSTANTS
 
 FPS = 50;
-MIN_DELAY = 200;
+MIN_DELAY = 0;
 
 BOARD_SIZE = 8;
 CELL_SIZE = 64; // in px
@@ -124,7 +124,7 @@ function main() {
     setInterval(function () {
         render();
         tick();
-    }, 1000 / FPS);
+    }, 1);
     //registerMouseEvents();
 }
 
@@ -345,7 +345,7 @@ function makeMove() {
     if (valid_moves.length > 0) {
         doMove(valid_moves[Math.floor(valid_moves.length * Math.random())]);
     } else {
-        //alert("Game Over");
+        restart();
     }
 
     if (isBlack(turn)) {

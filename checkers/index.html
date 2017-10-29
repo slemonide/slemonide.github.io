@@ -14,7 +14,7 @@
                     <canvas id="main" width="512" height="512"></canvas>
                 </td>
                 <td>
-                    <p>Turn: <span id="turn"></span></p>
+                    <h3>Controls</h3>
                     <table>
                         <tr><td>
                             <button onclick="makeMove()">Make move</button>
@@ -25,6 +25,15 @@
                     <h3>Valid moves</h3>
                     <p>Total moves possible: <span id="totalMovesPossible"></span></p>
                     <table id="possibleMoves"></table>
+                </td>
+                <td>
+                    <h3>Statistics</h3>
+                    <table>
+                        <tr><td>Turn: <span id="turn"></span></td></tr>
+                        <tr><td>Norm of current board: <span id="norm"></span></td></tr>
+                        <tr><td>Number of white pucks: <span id="numOfWhitePucks"></span></td></tr>
+                        <tr><td>Number of black pucks: <span id="numOfBlackPucks"></span></td></tr>
+                    </table>
                 </td>
             </tr>
         </table>
