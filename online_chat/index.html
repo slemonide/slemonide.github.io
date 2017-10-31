@@ -25,7 +25,7 @@
 
             var str = document.getElementById("message").value;
             document.getElementById("message").value = "";
-            xhttp.open("POST", "post.php?q=" + encodeURIComponent(str), true);
+            xhttp.open("GET", "post.php?q=" + encodeURIComponent(str), true);
             xhttp.send();
         }
     </script>

@@ -571,4 +571,44 @@ function render() {
     renderTurn();
     renderPossibleMoves();
     renderStateMap();
+
+    function renderStatistics() {
+        function renderNorm() {
+            var normField = document.getElementById('norm');
+
+            normField.innerHTML = norm(boardToVector(currentBoard));
+        }
+
+        renderNorm();
+
+        function renderNumOfWhitePucks() {
+            var count = 0;
+
+            for (var i = 0; i < currentBoard.length; i++) {
+                if (isWhite(currentBoard[i])) {
+                    count++;
+                }
+            }
+
+            document.getElementById('numOfWhitePucks').innerHTML = count.toString();
+        }
+
+        renderNumOfWhitePucks();
+
+        function renderNumOfBlackPucks() {
+            var count = 0;
+
+            for (var i = 0; i < currentBoard.length; i++) {
+                if (isBlack(currentBoard[i])) {
+                    count++;
+                }
+            }
+
+            document.getElementById('numOfBlackPucks').innerHTML = count.toString();
+        }
+
+        renderNumOfBlackPucks();
+    }
+
+    renderStatistics();
 }
