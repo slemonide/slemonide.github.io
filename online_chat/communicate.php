@@ -1,10 +1,13 @@
 <?php
-$chat_log = "";
 
-if ($_REQUEST["q")) {
-    $text = htmlspecialchars($_REQUEST["q"]);
-    chat_log += "<li>$text</li>"
+if (!apc_exists("chat_log")) {
+    apc_store("chat_log", "")
 }
 
-echo chat_log;
+
+if (isset($_REQUEST["q"])) {
+    apc_store("chat_log", apc_fetch("chat_log") . "123")
+}
+
+echo apc_fetch("chat_log");
 ?>
