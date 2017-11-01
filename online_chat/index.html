@@ -8,6 +8,7 @@
         setInterval(communicate, 1000 / 60);
 
         var message = false;
+        var messageBeingReceived = false;
 
         function send() {
             message = document.getElementById("message").value;
@@ -15,21 +16,33 @@
         }
 
         function communicate() {
-            var xhttp = new XMLHttpRequest();
+            if (!messageBeingReceived) {
+                messageBeingReceived = true;
 
-            if (!message) {
-                xhttp.onreadystatechange = function() {
-                    if (this.readyState == 4 && this.status == 200) {
-                        document.getElementById("log").innerHTML =
-                            this.responseText;
-                    }
-                };
-                xhttp.open("GET", "log.txt", true);
-            } else {
-                xhttp.open("GET", "post.php?q=" + encodeURIComponent(message), true);
-                message = false;
+                var xhttp = new XMLHttpRequest();
+
+                if (!message) {
+                    xhttp.onreadystatechange = function () {
+                        if (this.readyState == 4) {
+                            if (this.status == 200) {
+                                document.getElementById("log").innerHTML =
+                                    this.responseText;
+                            }
+                            messageBeingReceived = false;
+                        }
+                    };
+                    xhttp.open("GET", "log.txt", true);
+                } else {
+                    xhttp.onreadystatechange = function () {
+                        if (this.readyState == 4) {
+                            messageBeingReceived = false;
+                        }
+                    };
+                    xhttp.open("GET", "post.php?q=" + encodeURIComponent(message), true);
+                    message = false;
+                }
+                xhttp.send();
             }
-            xhttp.send();
         }
     </script>
 </head>
