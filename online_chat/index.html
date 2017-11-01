@@ -4,27 +4,31 @@
     <title>Online Chat</title>
     <link rel="stylesheet" href="main.css">
     <script>
-        loadDoc();
-        setInterval(loadDoc, 1000 / 60);
+        communicate();
+        setInterval(communicate, 1000 / 60);
 
-        function loadDoc() {
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
-                if (this.readyState == 4 && this.status == 200) {
-                    document.getElementById("log").innerHTML =
-                        this.responseText;
-                }
-            };
-            xhttp.open("GET", "log.txt", true);
-            xhttp.send();
-        }
+        var message = false;
 
         function send() {
+            message = document.getElementById("message").value;
+            document.getElementById("message").value = "";
+        }
+
+        function communicate() {
             var xhttp = new XMLHttpRequest();
 
-            var str = document.getElementById("message").value;
-            document.getElementById("message").value = "";
-            xhttp.open("GET", "post.php?q=" + encodeURIComponent(str), true);
+            if (!message) {
+                xhttp.onreadystatechange = function() {
+                    if (this.readyState == 4 && this.status == 200) {
+                        document.getElementById("log").innerHTML =
+                            this.responseText;
+                    }
+                };
+                xhttp.open("GET", "log.txt", true);
+            } else {
+                xhttp.open("GET", "post.php?q=" + encodeURIComponent(message), true);
+                message = false;
+            }
             xhttp.send();
         }
     </script>
@@ -34,12 +38,12 @@
 <div class="container">
     <h1>Chat</h1>
     <ul id="log"></ul>
-        <div style="bottom:0;">
-            <form action="javascript:send();">
+    <div style="bottom:0;">
+        <form action="javascript:send();">
             <input type="text" title="" id="message"/>
             <button type="button" onclick="send()">Send</button>
-            </form>
-        </div>
+        </form>
+    </div>
 </div>
 
 </body>
