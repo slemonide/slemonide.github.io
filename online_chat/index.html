@@ -2,8 +2,7 @@
 <html>
 <head>
     <title>Online Chat</title>
-    <link rel="stylesheet" href="../life_basic_colored/main.css">
-    <link rel="stylesheet" href="../bg_canvas.css">
+    <link rel="stylesheet" href="main.css">
     <script>
         loadDoc();
         setInterval(loadDoc, 1000 / 60);
@@ -33,12 +32,14 @@
 <body>
 
 <div class="container">
-<h1>Chat</h1>
-<ul id="log"></ul>
-<form action="javascript:send();">
-    <input type="text" title="" id="message"/>
-    <button type="button" onclick="send()">Send</button>
-</form>
+    <h1>Chat</h1>
+    <ul id="log"></ul>
+        <div style="bottom:0;">
+            <form action="javascript:send();">
+            <input type="text" title="" id="message"/>
+            <button type="button" onclick="send()">Send</button>
+            </form>
+        </div>
 </div>
 
 </body>
