@@ -31,30 +31,66 @@ var turn = "w";
 
 // CellState is one of:
 // - "b" -- black
+// - "bK" -- black king
 // - "w" -- white
+// - "wK" -- white king
 // - "e" -- empty
-// interp. cell state, either a puck of specified color or empty
+// interp. cell state, either a puck of specified role or empty
 
 /*
 function fn_for_cellState(cellState) {
     if (isBlack(cellState)) {
         //...
+    } else if (isBlackKing(cellState)) {
+        //...
     } else if (isWhite(cellState)) {
+        //...
+    } else if (isWhiteKing(cellState)) {
         //...
     } else {
         //...
     }
-}
-*/
+}*/
 
 function isBlack(cellState) {
     return (cellState === "b");
+}
+
+function isBlackKing(cellState) {
+    return (cellState === "bK");
 }
 
 function isWhite(cellState) {
     return (cellState === "w");
 }
 
+function isWhiteKing(cellState) {
+    return (cellState === "wK");
+}
+
+/**
+ * Produce true if cellState is owned by black side
+ * @param cellState
+ * @returns {boolean}
+ */
+function isOwnedByBlack(cellState) {
+    return (isBlack(cellState) || isBlackKing(cellState));
+}
+
+/**
+ * Produce true if cellState is owned by white side
+ * @param cellState
+ * @returns {boolean}
+ */
+function isOwnedByWhite(cellState) {
+    return (isWhite(cellState) || isWhiteKing(cellState));
+}
+
+/**
+ * Produce true if cellState is empty
+ * @param cellState
+ * @returns {boolean}
+ */
 function isEmpty(cellState) {
     return (cellState === "e");
 }
@@ -178,10 +214,10 @@ function areOppositeColors(cellState, pos) {
 
     if (isEmpty(brdCellState)) {
         return false;
-    } else if (isWhite(brdCellState)) {
-        return isBlack(cellState);
-    } else if (isBlack(brdCellState)) {
-        return isWhite(cellState);
+    } else if (isOwnedByWhite(brdCellState)) {
+        return isOwnedByBlack(cellState);
+    } else if (isOwnedByBlack(brdCellState)) {
+        return isOwnedByWhite(cellState);
     }
 }
 
@@ -194,7 +230,7 @@ function getAllValidMoves() {
     function generateTrivialMoves(pos, cellState) {
         var add1, add2;
 
-        if (isWhite(cellState)) {
+        if (isOwnedByWhite(cellState)) {
             add1 = {
                 x: pos.x + 1,
                 y: pos.y - 1
@@ -234,7 +270,7 @@ function getAllValidMoves() {
     function generateCapturingMoves(pos, cellState) {
         var capture1, capture2, add1, add2;
 
-        if (isWhite(cellState)) {
+        if (isOwnedByWhite(cellState)) {
             capture1 = {
                 x: pos.x + 1,
                 y: pos.y - 1
@@ -306,12 +342,31 @@ function getAllValidMoves() {
 
 /**
  * Add given puck to the board
- * @param color color to add
+ * @param cellState puck to add
  * @param pos position at which to add it
  */
-function placePuck(color, pos) {
-    var i = posToIndex(pos);
-    currentBoard[i] = color;
+function placePuck(cellState, pos) {
+    let i = posToIndex(pos);
+
+    if (isBlack(cellState)) {
+        if (pos.y === BOARD_SIZE - 1) {
+            currentBoard[i] = "bK";
+        } else {
+            currentBoard[i] = "b";
+        }
+    } else if (isBlackKing(cellState)) {
+        currentBoard[i] = "bK";
+    } else if (isWhite(cellState)) {
+        if (pos.y === 0) {
+            currentBoard[i] = "wK";
+        } else {
+            currentBoard[i] = "w";
+        }
+    } else if (isWhiteKing(cellState)) {
+        currentBoard[i] = "wK";
+    } else {
+        //...
+    }
 }
 
 /**
@@ -348,7 +403,7 @@ function makeMove() {
         restart();
     }
 
-    if (isBlack(turn)) {
+    if (isOwnedByBlack(turn)) {
         turn = "w";
     } else {
         turn = "b";
@@ -414,9 +469,9 @@ function getRandomVector(size) {
  * @param cellState
  */
 function boardStateToNumber(cellState) {
-    if (isBlack(cellState)) {
+    if (isOwnedByBlack(cellState)) {
         return 1;
-    } else if (isWhite(cellState)) {
+    } else if (isOwnedByWhite(cellState)) {
         return 2;
     } else {
         return 0;
@@ -509,27 +564,52 @@ function render() {
         ctx.stroke();
     }
 
+    function renderDotAt(x, y) {
+        ctx.beginPath();
+        ctx.arc(CELL_SIZE * (x + 0.5), CELL_SIZE * (y + 0.5), CELL_SIZE / 2 * 0.4, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = '#996543';
+        ctx.stroke();
+    }
+
     /**
      * Renders pucks on the board (uses currentBoard)
      */
     function renderPucks() {
+        function renderPuck(cellState, x, y) {
+            if (isBlack(cellState)) {
+                ctx.fillStyle = BLACK_PUCK;
+                renderPuckAt(x, y);
+            } else if (isBlackKing(cellState)) {
+                ctx.fillStyle = BLACK_PUCK;
+                renderPuckAt(x, y);
+                ctx.fillStyle = WHITE_PUCK;
+                renderDotAt(x, y);
+            } else if (isWhite(cellState)) {
+                ctx.fillStyle = WHITE_PUCK;
+                renderPuckAt(x, y);
+            } else if (isWhiteKing(cellState)) {
+                ctx.fillStyle = WHITE_PUCK;
+                renderPuckAt(x, y);
+                ctx.fillStyle = BLACK_PUCK;
+                renderDotAt(x, y);
+            } else {
+                // render nothing
+            }
+        }
+
         for (var i = 0; i < currentBoard.length; i++) {
             var x = i % BOARD_SIZE;
             var y = Math.floor(i / BOARD_SIZE);
 
-            if (currentBoard[i] === "b") {
-                ctx.fillStyle = BLACK_PUCK;
-                renderPuckAt(x, y);
-            } else if (currentBoard[i] === "w") {
-                ctx.fillStyle = WHITE_PUCK;
-                renderPuckAt(x, y);
-            }
+            renderPuck(currentBoard[i], x, y);
         }
     }
 
     function renderTurn()  {
         var turnField = document.getElementById('turn');
-        if (isWhite(turn)) {
+        if (isOwnedByWhite(turn)) {
             turnField.innerHTML = "White";
         } else {
             turnField.innerHTML = "Black";
@@ -585,7 +665,7 @@ function render() {
             var count = 0;
 
             for (var i = 0; i < currentBoard.length; i++) {
-                if (isWhite(currentBoard[i])) {
+                if (isOwnedByWhite(currentBoard[i])) {
                     count++;
                 }
             }
@@ -599,7 +679,7 @@ function render() {
             var count = 0;
 
             for (var i = 0; i < currentBoard.length; i++) {
-                if (isBlack(currentBoard[i])) {
+                if (isOwnedByBlack(currentBoard[i])) {
                     count++;
                 }
             }
