@@ -107,18 +107,17 @@ function getNewBoard() {
         "w", "e", "w", "e", "w", "e", "w", "e",
         "e", "w", "e", "w", "e", "w", "e", "w",
         "w", "e", "w", "e", "w", "e", "w", "e"
-
     ]
+
     // return [
     //     "e", "e", "e", "e", "e", "e", "e", "e",
     //     "e", "e", "e", "e", "e", "e", "e", "e",
+    //     "e", "e", "e", "e", "e", "wK", "e", "e",
     //     "e", "e", "e", "e", "e", "e", "e", "e",
+    //     "e", "e", "e", "bK", "e", "e", "e", "e",
     //     "e", "e", "e", "e", "e", "e", "e", "e",
-    //     "e", "e", "e", "e", "e", "b", "e", "e",
-    //     "e", "e", "e", "e", "w", "e", "e", "e",
     //     "e", "e", "e", "e", "e", "e", "e", "e",
     //     "e", "e", "e", "e", "e", "e", "e", "e"
-    //
     // ]
 }
 
@@ -227,111 +226,147 @@ function areOppositeColors(cellState, pos) {
 function getAllValidMoves() {
     var validMoves = [];
 
+    // template as function composition
     function generateTrivialMoves(pos, cellState) {
-        var add1, add2;
+        function generatePossibleMoves(cellState) {
+            var possibleMoves = [];
 
-        if (isOwnedByWhite(cellState)) {
-            add1 = {
-                x: pos.x + 1,
-                y: pos.y - 1
-            };
+            function blackMoves() {
+                possibleMoves.push({
+                    x: pos.x + 1,
+                    y: pos.y + 1
+                });
 
-            add2 = {
-                x: pos.x - 1,
-                y: pos.y - 1
-            };
-        } else {
-            add1 = {
-                x: pos.x + 1,
-                y: pos.y + 1
-            };
+                possibleMoves.push({
+                    x: pos.x - 1,
+                    y: pos.y + 1
+                });
+            }
 
-            add2 = {
-                x: pos.x - 1,
-                y: pos.y + 1
-            };
+            function whiteMoves() {
+                possibleMoves.push({
+                    x: pos.x + 1,
+                    y: pos.y - 1
+                });
+
+                possibleMoves.push({
+                    x: pos.x - 1,
+                    y: pos.y - 1
+                });
+            }
+
+            if (isBlack(cellState)) {
+                blackMoves();
+            } else if (isBlackKing(cellState)) {
+                blackMoves();
+                whiteMoves();
+            } else if (isWhite(cellState)) {
+                whiteMoves();
+            } else if (isWhiteKing(cellState)) {
+                blackMoves();
+                whiteMoves();
+            } else {
+                //...
+            }
+            return possibleMoves;
         }
 
-        if (isOnBoard(add1) && isFree(add1)) {
-            validMoves.push({
-                remove: [pos],
-                add: [add1]
-            })
-        }
+        var possibleMoves = generatePossibleMoves(cellState);
 
-        if (isOnBoard(add2) && isFree(add2)) {
-            validMoves.push({
-                remove: [pos],
-                add: [add2]
-            })
+        for (var i = 0; i < possibleMoves.length; i++) {
+            if (isOnBoard(possibleMoves[i]) && isFree(possibleMoves[i])) {
+                validMoves.push({
+                    remove: [pos],
+                    add: [possibleMoves[i]]
+                })
+            }
         }
     }
 
+    // template from CellState
     function generateCapturingMoves(pos, cellState) {
-        var capture1, capture2, add1, add2;
+        let possibleCaptures = [];
+        let possibleMoves = [];
 
-        if (isOwnedByWhite(cellState)) {
-            capture1 = {
-                x: pos.x + 1,
-                y: pos.y - 1
-            };
+        function generatePossibleActions(pos, cellState) {
+            function blackMoves() {
+                possibleCaptures.push({
+                    x: pos.x + 1,
+                    y: pos.y + 1
+                });
 
-            capture2 = {
-                x: pos.x - 1,
-                y: pos.y - 1
-            };
+                possibleMoves.push({
+                    x: pos.x + 2,
+                    y: pos.y + 2
+                });
 
-            add1 = {
-                x: pos.x + 2,
-                y: pos.y - 2
-            };
+                possibleCaptures.push({
+                    x: pos.x - 1,
+                    y: pos.y + 1
+                });
 
-            add2 = {
-                x: pos.x - 2,
-                y: pos.y - 2
-            };
-        } else {
-            capture1 = {
-                x: pos.x + 1,
-                y: pos.y + 1
-            };
+                possibleMoves.push({
+                    x: pos.x - 2,
+                    y: pos.y + 2
+                });
+            }
 
-            capture2 = {
-                x: pos.x - 1,
-                y: pos.y + 1
-            };
+            function whiteMoves() {
+                possibleCaptures.push({
+                    x: pos.x + 1,
+                    y: pos.y - 1
+                });
 
-            add1 = {
-                x: pos.x + 2,
-                y: pos.y + 2
-            };
+                possibleMoves.push({
+                    x: pos.x + 2,
+                    y: pos.y - 2
+                });
 
-            add2 = {
-                x: pos.x - 2,
-                y: pos.y + 2
-            };
+                possibleCaptures.push({
+                    x: pos.x - 1,
+                    y: pos.y - 1
+                });
+
+                possibleMoves.push({
+                    x: pos.x - 2,
+                    y: pos.y - 2
+                });
+            }
+
+            if (isBlack(cellState)) {
+                blackMoves();
+            } else if (isBlackKing(cellState)) {
+                blackMoves();
+                whiteMoves();
+            } else if (isWhite(cellState)) {
+                whiteMoves();
+            } else if (isWhiteKing(cellState)) {
+                blackMoves();
+                whiteMoves();
+            } else {
+                //...
+            }
         }
 
-        if (isOnBoard(add1) && isFree(add1) && areOppositeColors(cellState, capture1)) {
-            validMoves.push({
-                remove: [pos, capture1],
-                add: [add1]
-            })
-        }
+        generatePossibleActions(pos, cellState);
 
-        if (isOnBoard(add2) && isFree(add2) && areOppositeColors(cellState, capture2)) {
-            validMoves.push({
-                remove: [pos, capture2],
-                add: [add2]
-            })
+        for (let i = 0; i < possibleMoves.length; i++) {
+            if (isOnBoard(possibleMoves[i]) &&
+                isFree(possibleMoves[i]) &&
+                areOppositeColors(cellState, possibleCaptures[i])) {
+                validMoves.push({
+                    remove: [pos, possibleCaptures[i]],
+                    add: [possibleMoves[i]]
+                })
+            }
         }
     }
 
-    for (var i = 0; i < currentBoard.length; i++) {
+    for (let i = 0; i < currentBoard.length; i++) {
         var cellState = currentBoard[i];
         var pos = indexToPos(i);
 
-        if (cellState === turn) {
+        if (isWhite(turn) && isOwnedByWhite(cellState) || isBlack(turn) && isOwnedByBlack(cellState)) {
             generateTrivialMoves(pos, cellState);
             generateCapturingMoves(pos, cellState);
         }
@@ -384,7 +419,7 @@ function removePuck(pos) {
  */
 function doMove(move) {
    for (var i = 0; i < move.add.length; i++) {
-       placePuck(turn, move.add[i]);
+       placePuck(currentBoard[posToIndex(move.remove[0])], move.add[i]);
    }
 
    for (var j = 0; j < move.remove.length; j++) {
@@ -616,7 +651,18 @@ function render() {
         }
     }
 
-    function renderPossibleMoves() {
+    function renderPossibleMoveDirections() {
+        var validMoves = getAllValidMoves();
+
+        for (var i = 0; i < currentBoard.length; i++) {
+            var x = i % BOARD_SIZE;
+            var y = Math.floor(i / BOARD_SIZE);
+
+            ctx.moveTo(10,10);
+        }
+    }
+
+    function renderPossibleMovesTable() {
         var possibleMovesField = document.getElementById('possibleMoves');
         var validMoves = getAllValidMoves();
 
@@ -649,14 +695,15 @@ function render() {
     renderBoard();
     renderPucks();
     renderTurn();
-    renderPossibleMoves();
+    renderPossibleMovesTable();
+    renderPossibleMoveDirections();
     renderStateMap();
 
     function renderStatistics() {
         function renderNorm() {
             var normField = document.getElementById('norm');
 
-            normField.innerHTML = norm(boardToVector(currentBoard));
+            normField.innerHTML = norm(boardToVector(currentBoard)).toFixed(5);
         }
 
         renderNorm();
