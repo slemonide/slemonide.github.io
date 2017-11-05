@@ -5,51 +5,93 @@
  */
 
 stateMap = {
-    currentPath: [],
+    currentPath: {
+        states: [],
+        transitions: []
+    },
     states: [],
     stateTransitions: []
 };
 
 /**
+ * Turns the board into a state
+ * @param board
+ */
+function makeState(board) {
+    // Convert current board state to a vector
+    var brd = boardToVector(board);
+
+    // Now project the board to our 2d basis
+    var brdX = dotProduct(brd, b1) / (norm(brd) * norm(b1));
+    var brdY = dotProduct(brd, b2) / (norm(brd) * norm(b1));
+
+    return {
+        vector:brd,
+        x:brdX,
+        y:brdY
+    }
+}
+
+/**
  * Record board for the current game
+ *
+ * Use it after applying the transition
  * @param board
  */
 stateMap.recordState = function (board) {
-    /**
-     * Turns the board into a state
-     * @param board
-     */
-    function makeState(board) {
-        // Convert current board state to a vector
-        var brd = boardToVector(currentBoard);
+    let state = makeState(board);
 
-        // Now project the board to our 2d basis
-        var brdX = dotProduct(brd, b1) / (norm(brd) * norm(b1));
-        var brdY = dotProduct(brd, b2) / (norm(brd) * norm(b1));
+    this.currentPath.states.push(state);
 
-        return {
-            vector:brd,
-            x:brdX,
-            y:brdY
-        }
+    let id = state.vector.toString();
+    if (!s.graph.nodes(id)) {
+        s.graph.addNode({
+            // Main attributes:
+            id: id,
+            label: '',
+            // Display attributes:
+            x: state.x,
+            y: state.y,
+            size: 1,
+            color: '#f00'
+        });
+
+        s.refresh();
     }
-
-    this.currentPath.push(makeState(board));
 };
 
 /**
  * Record transition for the current game
+ *
+ * Use it after applying the transition
  * @param stateTransition
  */
 stateMap.recordTransition = function (stateTransition) {
-    this.currentPath.push(stateTransition);
+    this.currentPath.transitions.push(stateTransition);
+
+    var prev = this.currentPath.states[this.currentPath.states.length - 2].vector.toString();
+    var next = this.currentPath.states[this.currentPath.states.length - 1].vector.toString();
+
+    let id = prev + next;
+    if (!s.graph.edges(id)) {
+        s.graph.addEdge({
+            id: id,
+            // Reference extremities:
+            source: prev,
+            target: next,
+            color: isWhite(turn) ? "#e00" : "#0e0"
+        });
+
+        s.refresh();
+    }
 };
 
 /**
  * Lose all the recorded date for the current game and start from the beginning
  */
 stateMap.restart = function () {
-    this.currentPath = []
+    this.currentPath.states = [];
+    this.currentPath.transitions = [];
 };
 
 /**
@@ -58,18 +100,4 @@ stateMap.restart = function () {
  */
 stateMap.recordGame = function (winningSide) {
     // TODO: finish
-};
-
-stateMap.render = function () {
-    var stateMapCanvas = document.getElementById("stateMap");
-    var stateCtx = stateMapCanvas.getContext('2d');
-
-    stateCtx.clearRect(0, 0, stateMapCanvas.width, stateMapCanvas.height);
-
-    for (let i = 0; i < this.currentPath.length; i++) {
-        let state = this.currentPath[i];
-
-        stateCtx.fillStyle = 'red';
-        stateCtx.fillRect(state.x * stateMapCanvas.width, state.y * stateMapCanvas.height, 2, 2);
-    }
 };

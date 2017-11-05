@@ -170,6 +170,9 @@ var canvas, ctx;
 function init_environment() {
     canvas = document.getElementById('main');
     ctx = canvas.getContext('2d');
+    s = new sigma('container');
+
+    stateMap.recordState(currentBoard);
 }
 
 /**
@@ -418,16 +421,16 @@ function removePuck(pos) {
  * @param move
  */
 function doMove(move) {
+    for (var i = 0; i < move.add.length; i++) {
+        placePuck(currentBoard[posToIndex(move.remove[0])], move.add[i]);
+    }
+
+    for (var j = 0; j < move.remove.length; j++) {
+        removePuck(move.remove[j]);
+    }
+
     stateMap.recordState(currentBoard);
     stateMap.recordTransition(move);
-
-   for (var i = 0; i < move.add.length; i++) {
-       placePuck(currentBoard[posToIndex(move.remove[0])], move.add[i]);
-   }
-
-   for (var j = 0; j < move.remove.length; j++) {
-       removePuck(move.remove[j]);
-   }
 }
 
 /**
@@ -675,7 +678,6 @@ function render() {
     renderPucks();
     renderTurn();
     renderPossibleMovesTable();
-    stateMap.render();
 
     function renderStatistics() {
         function renderNorm() {
