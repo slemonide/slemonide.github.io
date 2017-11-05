@@ -418,6 +418,9 @@ function removePuck(pos) {
  * @param move
  */
 function doMove(move) {
+    stateMap.recordState(currentBoard);
+    stateMap.recordTransition(move);
+
    for (var i = 0; i < move.add.length; i++) {
        placePuck(currentBoard[posToIndex(move.remove[0])], move.add[i]);
    }
@@ -435,6 +438,7 @@ function makeMove() {
     if (valid_moves.length > 0) {
         doMove(valid_moves[Math.floor(valid_moves.length * Math.random())]);
     } else {
+        stateMap.recordGame(turn);
         restart();
     }
 
@@ -468,6 +472,7 @@ function playStop() {
 }
 
 function restart() {
+    stateMap.restart();
     currentBoard = getNewBoard();
 }
 
@@ -651,17 +656,6 @@ function render() {
         }
     }
 
-    function renderPossibleMoveDirections() {
-        var validMoves = getAllValidMoves();
-
-        for (var i = 0; i < currentBoard.length; i++) {
-            var x = i % BOARD_SIZE;
-            var y = Math.floor(i / BOARD_SIZE);
-
-            ctx.moveTo(10,10);
-        }
-    }
-
     function renderPossibleMovesTable() {
         var possibleMovesField = document.getElementById('possibleMoves');
         var validMoves = getAllValidMoves();
@@ -677,27 +671,11 @@ function render() {
         }
     }
 
-    function renderStateMap() {
-        var stateMapCanvas = document.getElementById("stateMap");
-        var stateCtx = stateMapCanvas.getContext('2d');
-
-        // Convert current board state to a vector
-        var brd = boardToVector(currentBoard);
-
-        // Now project the board to our 2d basis
-        var brdX = dotProduct(brd, b1) / (norm(brd) * norm(b1));
-        var brdY = dotProduct(brd, b2) / (norm(brd) * norm(b1));
-
-        stateCtx.fillStyle = 'red';
-        stateCtx.fillRect(brdX * stateMapCanvas.width, brdY * stateMapCanvas.height, 2, 2);
-    }
-
     renderBoard();
     renderPucks();
     renderTurn();
     renderPossibleMovesTable();
-    renderPossibleMoveDirections();
-    renderStateMap();
+    stateMap.render();
 
     function renderStatistics() {
         function renderNorm() {

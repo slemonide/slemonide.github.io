@@ -11,29 +11,65 @@ stateMap = {
 };
 
 /**
- * Starts a new path
+ * Record board for the current game
+ * @param board
  */
-stateMap.startNewPath = function () {
+stateMap.recordState = function (board) {
+    /**
+     * Turns the board into a state
+     * @param board
+     */
+    function makeState(board) {
+        // Convert current board state to a vector
+        var brd = boardToVector(currentBoard);
 
+        // Now project the board to our 2d basis
+        var brdX = dotProduct(brd, b1) / (norm(brd) * norm(b1));
+        var brdY = dotProduct(brd, b2) / (norm(brd) * norm(b1));
+
+        return {
+            vector:brd,
+            x:brdX,
+            y:brdY
+        }
+    }
+
+    this.currentPath.push(makeState(board));
 };
 
 /**
- * Produce the current state
+ * Record transition for the current game
+ * @param stateTransition
  */
-stateMap.getCurrentState = function () {
-
+stateMap.recordTransition = function (stateTransition) {
+    this.currentPath.push(stateTransition);
 };
 
 /**
- * Produce all of the possible state transitions for the current state
+ * Lose all the recorded date for the current game and start from the beginning
  */
-stateMap.getPossibleStateTransitions = function () {
-
+stateMap.restart = function () {
+    this.currentPath = []
 };
 
 /**
- * Choose the most preferable state transition and execute it
+ * Indicate that the game is ended and the side specified won
+ * @param winningSide
  */
-stateMap.makeMove = function () {
+stateMap.recordGame = function (winningSide) {
+    // TODO: finish
+};
 
+stateMap.render = function () {
+    var stateMapCanvas = document.getElementById("stateMap");
+    var stateCtx = stateMapCanvas.getContext('2d');
+
+    stateCtx.clearRect(0, 0, stateMapCanvas.width, stateMapCanvas.height);
+
+    for (let i = 0; i < this.currentPath.length; i++) {
+        let state = this.currentPath[i];
+
+        stateCtx.fillStyle = 'red';
+        stateCtx.fillRect(state.x * stateMapCanvas.width, state.y * stateMapCanvas.height, 2, 2);
+    }
 };
