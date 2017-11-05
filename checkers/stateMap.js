@@ -55,8 +55,6 @@ stateMap.recordState = function (board) {
             size: 1,
             color: '#f00'
         });
-
-        s.refresh();
     }
 };
 
@@ -79,7 +77,7 @@ stateMap.recordTransition = function (stateTransition) {
             // Reference extremities:
             source: prev,
             target: next,
-            color: isWhite(turn) ? "#e00" : "#0e0"
+            color: isWhite(turn) ? "#00b" : "#0e0"
         });
 
         s.refresh();
@@ -92,6 +90,7 @@ stateMap.recordTransition = function (stateTransition) {
 stateMap.restart = function () {
     this.currentPath.states = [];
     this.currentPath.transitions = [];
+    this.recordState(currentBoard);
 };
 
 /**
@@ -99,5 +98,6 @@ stateMap.restart = function () {
  * @param winningSide
  */
 stateMap.recordGame = function (winningSide) {
+    this.recordState(currentBoard);
     // TODO: finish
 };
