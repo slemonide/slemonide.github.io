@@ -32,17 +32,7 @@ function makeState(board) {
     }
 }
 
-/**
- * Record board for the current game
- *
- * Use it after applying the transition
- * @param board
- */
-stateMap.recordState = function (board) {
-    let state = makeState(board);
-
-    this.currentPath.states.push(state);
-
+function renderAddNode(state) {
     let id = state.vector.toString();
     if (!s.graph.nodes(id)) {
         s.graph.addNode({
@@ -56,17 +46,22 @@ stateMap.recordState = function (board) {
             color: '#f00'
         });
     }
-};
+}
 
 /**
- * Record transition for the current game
+ * Record board for the current game
  *
  * Use it after applying the transition
- * @param stateTransition
+ * @param board
  */
-stateMap.recordTransition = function (stateTransition) {
-    this.currentPath.transitions.push(stateTransition);
+stateMap.recordState = function (board) {
+    let state = makeState(board);
 
+    this.currentPath.states.push(state);
+    renderAddNode(state);
+};
+
+function renderAddEdge() {
     var prev = this.currentPath.states[this.currentPath.states.length - 2].vector.toString();
     var next = this.currentPath.states[this.currentPath.states.length - 1].vector.toString();
 
@@ -82,6 +77,17 @@ stateMap.recordTransition = function (stateTransition) {
 
         s.refresh();
     }
+}
+
+/**
+ * Record transition for the current game
+ *
+ * Use it after applying the transition
+ * @param stateTransition
+ */
+stateMap.recordTransition = function (stateTransition) {
+    this.currentPath.transitions.push(stateTransition);
+    renderAddEdge.call(this);
 };
 
 /**
