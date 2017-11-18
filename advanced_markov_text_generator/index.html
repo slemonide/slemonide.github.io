@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="main.js"></script>
+    <title>Markov Chain Text Generator</title>
+</head>
+<body onload="load();">
+<div class="container">
+    <h1>Markov Chain Text Generator</h1>
+    <p>Generates text using Markov chains based on the text sample provided</p>
+
+    <table>
+        <tr>
+            <td>
+                <textarea id="input" title="" cols="50" rows="10"></textarea>
+            </td>
+            <td>
+                <table>
+                    <tr>
+                        <td><button onclick="reset();">Reset</button></td>
+                        <td><button onclick="playStop();" id="playStopButton">Play</button></td>
+                    </tr>
+                    <tr>
+                        <td><button onclick="buildModel();">Build model</button></td>
+                        <td><button onclick="generate();">Generate</button></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <p id="output"></p>
+    <table id="markovMatrix"></table>
+</div>
+</body>
+</html>
