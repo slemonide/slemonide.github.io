@@ -16,7 +16,7 @@ WHITE_PUCK = getColor(240, 240, 240);
 
 /*
  * Vector is array(number)
- * interp. a vector of arbitrary size
+ * interp. a vector of arbitrary vocabularySize
  */
 
 // Randomly chosen 2d basis
@@ -95,7 +95,7 @@ function isEmpty(cellState) {
     return (cellState === "e");
 }
 
-// Board is an array of size BOARD_SIZE * BOARD_SIZE,
+// Board is an array of vocabularySize BOARD_SIZE * BOARD_SIZE,
 // filled with CellStates's
 function getNewBoard() {
     return [
@@ -494,7 +494,7 @@ function positionSetToString(set) {
 }
 
 /**
- * Produce a randomly chosen unit vector of specified size
+ * Produce a randomly chosen unit vector of specified vocabularySize
  * @param size
  */
 function getRandomVector(size) {
@@ -537,7 +537,7 @@ function boardToVector(board) {
 
 /**
  * Compute the dot product between two vectors
- * ASSUME: vectors are of the same size
+ * ASSUME: vectors are of the same vocabularySize
  * @param v1
  * @param v2
  */
