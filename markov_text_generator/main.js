@@ -2,6 +2,8 @@ var markovMatrix = {};
 var firstWordGenerated = false;
 var prevWord;
 
+var pause = true;
+
 function renderMarkovMatrix(markovMatrix) {
     var output = document.getElementById('markovMatrix');
     output.innerHTML = "";
@@ -21,15 +23,17 @@ function renderMarkovMatrix(markovMatrix) {
 
 function collectData(words) {
     for (let i = 0; i < words.length; i++) {
-        if (i < words.length - 1) {
-            if (!markovMatrix[words[i]]) {
-                markovMatrix[words[i]] = {};
-            }
+        if (words[i] !== "") {
+            if (i < words.length - 1) {
+                if (!markovMatrix[words[i]]) {
+                    markovMatrix[words[i]] = {};
+                }
 
-            if (!markovMatrix[words[i]][words[i + 1]]) {
-                markovMatrix[words[i]][words[i + 1]] = 1;
-            } else {
-                markovMatrix[words[i]][words[i + 1]]++;
+                if (!markovMatrix[words[i]][words[i + 1]]) {
+                    markovMatrix[words[i]][words[i + 1]] = 1;
+                } else {
+                    markovMatrix[words[i]][words[i + 1]]++;
+                }
             }
         }
     }
@@ -120,4 +124,30 @@ function generate() {
     }
 
     output.innerHTML += prevWord + " ";
+}
+
+function reset() {
+    var output = document.getElementById('output');
+
+    output.innerHTML = "";
+    firstWordGenerated = false;
+}
+
+function load() {
+    setInterval(function () {
+        if (!pause) {
+            generate();
+        }
+    }, 100)
+}
+
+function playStop() {
+    pause = !pause;
+
+    var playStopButton = document.getElementById("playStopButton");
+    if (pause) {
+        playStopButton.innerHTML = "Play";
+    } else {
+        playStopButton.innerHTML = "Pause";
+    }
 }
