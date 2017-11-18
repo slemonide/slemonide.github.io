@@ -1,5 +1,6 @@
 var markovMatrix = {};
-var prevWord = false;
+var firstWordGenerated = false;
+var prevWord;
 
 function renderMarkovMatrix(markovMatrix) {
     var output = document.getElementById('markovMatrix');
@@ -70,49 +71,52 @@ function buildModel() {
     normalizeProbabilityVectors();
 }
 
+function generateNextWord() {
+    var row = markovMatrix[prevWord];
+
+    var randomVar = Math.random();
+
+    var continuousIndex = 0;
+    for (let key in row) {
+        continuousIndex += row[key] * row[key];
+        if (randomVar <= continuousIndex) {
+            return key;
+        }
+    }
+
+    // can't find next word using markov matrix
+    console.log("ERROR: can't find next word using markov matrix");
+    return generateFirstWord();
+}
+
+function generateFirstWord() {
+    var matrixSize = 0;
+
+    for (let key in markovMatrix) {
+        matrixSize++;
+    }
+
+    var selectedIndex = Math.floor(Math.random() * matrixSize);
+
+    var index = 0;
+    for (let key in markovMatrix) {
+        if (selectedIndex === index) {
+            return key;
+        }
+        index++;
+    }
+
+    return "";
+}
+
 function generate() {
     var output = document.getElementById('output');
 
-    function generateNextWord(prevWord) {
-        var row = markovMatrix[prevWord];
-
-        var randomVar = Math.random();
-
-        var continuousIndex = 0;
-        for (let key in row) {
-            continuousIndex += row[key] * row[key];
-            if (randomVar >= continuousIndex) {
-                return key;
-            }
-        }
-
-        return "";
-    }
-
-    function generateFirstWord() {
-        var matrixSize = 0;
-
-        for (let key in markovMatrix) {
-            matrixSize++;
-        }
-
-        var selectedIndex = Math.floor(Math.random() * matrixSize);
-
-        var index = 0;
-        for (let key in markovMatrix) {
-            if (selectedIndex === index) {
-                return key;
-            }
-            index++;
-        }
-
-        return "";
-    }
-
-    if (prevWord === false) {
-        prevWord = generateNextWord(prevWord);
+    if (firstWordGenerated) {
+        prevWord = generateNextWord();
     } else {
         prevWord = generateFirstWord();
+        firstWordGenerated = true;
     }
 
     output.innerHTML += prevWord + " ";
