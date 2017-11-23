@@ -23,17 +23,49 @@ function renderMarkovMatrix(markovMatrix) {
 
 function collectData(words) {
     for (let i = 0; i < words.length; i++) {
-        if (words[i] !== "") {
-            if (i < words.length - 1) {
-                if (!markovMatrix[words[i]]) {
-                    markovMatrix[words[i]] = {};
-                }
+        // if (i < words.length - 1) {
+        //     if (!markovMatrix[words[i]]) {
+        //         markovMatrix[words[i]] = {};
+        //     }
+        //
+        //     if (!markovMatrix[words[i]][words[i + 1]]) {
+        //         markovMatrix[words[i]][words[i + 1]] = 1;
+        //     } else {
+        //         markovMatrix[words[i]][words[i + 1]]++;
+        //     }
+        // }
 
-                if (!markovMatrix[words[i]][words[i + 1]]) {
-                    markovMatrix[words[i]][words[i + 1]] = 1;
-                } else {
-                    markovMatrix[words[i]][words[i + 1]]++;
-                }
+        // Dirty hack:
+        // if (i < words.length - 3) {
+        //     // two prev words are used to generate two next words :3
+        //     let prev = words[i] + " " + words[i + 1];
+        //     let next = words[i + 2] + " " + words[i + 3];
+        //
+        //     if (!markovMatrix[prev]) {
+        //         markovMatrix[prev] = {};
+        //     }
+        //
+        //     if (!markovMatrix[prev][next]) {
+        //         markovMatrix[prev][next] = 1;
+        //     } else {
+        //         markovMatrix[prev][next]++;
+        //     }
+        // }
+
+        // Even dirtier:
+        if (i < words.length - 5) {
+            // two prev words are used to generate two next words :3
+            let prev = words[i] + " " + words[i + 1] + " " + words[i + 2];
+            let next = words[i + 3] + " " + words[i + 4] + " " + words[i + 5];
+
+            if (!markovMatrix[prev]) {
+                markovMatrix[prev] = {};
+            }
+
+            if (!markovMatrix[prev][next]) {
+                markovMatrix[prev][next] = 1;
+            } else {
+                markovMatrix[prev][next]++;
             }
         }
     }
@@ -68,7 +100,7 @@ function normalizeProbabilityVectors() {
 
 function buildModel() {
     var input = document.getElementById('input');
-    var words = input.value.split(" ");
+    var words = input.value.replace(/\n/g, "<br/>").split(/ +/g);
 
     markovMatrix = {};
     collectData(words);
@@ -89,7 +121,7 @@ function generateNextWord() {
     }
 
     // can't find next word using markov matrix
-    console.log("ERROR: can't find next word using markov matrix");
+    console.log("ERROR: can't find next word; prev word: " + prevWord);
     return generateFirstWord();
 }
 
