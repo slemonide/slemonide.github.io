@@ -1,17 +1,23 @@
 // Game
 
 var Game = {};
-Game.world = new Set();
+Game.world = [];
 
-CELL_SIZE = 16;
+CELL_SIZE = 8;
 MIN_DELAY = 200;
 
 Game.addFloor = function (x, y) {
-    Game.world.add(Cell.makeFloor(x,y));
+    if (!Game.world[Cell.makeFloor(x,y)]) {
+        Game.world.push(Cell.makeFloor(x, y));
+        Game.world[Cell.makeFloor(x,y)] = true;
+    }
 };
 
 Game.addWall = function (x, y) {
-    Game.world.add(Cell.makeWall(x,y));
+    if (!Game.world[Cell.makeWall(x,y)]) {
+        Game.world.push(Cell.makeWall(x, y));
+        Game.world[Cell.makeWall(x,y)] = true;
+    }
 };
 
 Game.init = function () {
@@ -59,11 +65,14 @@ Game.update = function () {
 
 var Cell = {};
 Cell.makeCell = function (x, y, color) {
-    return {
-        x: x,
-        y: y,
-        color : color
-    }
+    return new function () {
+        this.x = x;
+        this.y = y;
+        this.color = color;
+        this.toString = function () {
+            return this.x.toString() + " " + this.y.toString() + " " + this.color.toString();
+        }
+    };
 };
 
 Cell.makeWall = function (x, y) {
@@ -76,23 +85,28 @@ Cell.makeFloor = function (x, y) {
 
 // Graph
 
+function Position(x, y) {
+    this.x = x;
+    this.y = y;
+    this.toString = function () {
+        return x.toString() + " " + y.toString();
+    }
+}
+
 var Node = {};
 Node.makeNode = function (x, y) {
-    return {
-        x: x,
-        y: y
-    }
+    return new Position(x, y);
 };
 
 // Labyrinth
 
 Labyrinth = {};
-Labyrinth.nodes = new Set();
+Labyrinth.nodes = [];
 Labyrinth.connections = {
-    open: new Set(),
-    closed: new Set()
+    open: [],
+    closed: []
 };
-Labyrinth.nextNodes = new Set();
+Labyrinth.nextNodes = [];
 
 /**
  * Adds a node at (x,y)
@@ -100,15 +114,15 @@ Labyrinth.nextNodes = new Set();
  * @param y
  */
 Labyrinth.addNode = function (x, y) {
-    Labyrinth.nodes.add(Node.makeNode(x, y));
+    if (!Labyrinth.nodes[Node.makeNode(x, y)]) {
+        Labyrinth.nodes.push(Node.makeNode(x, y));
+        Labyrinth.nodes[Node.makeNode(x, y)] = true;
+    }
 };
 
 var Connection = {};
 Connection.makeConnection = function (x0, y0, x1, y1) {
-    return {
-        x: x0 + x1,
-        y: y0 + y1
-    }
+    return new Position(x0 + x1, y0 + y1);
 };
 
 /**
@@ -121,18 +135,25 @@ Connection.makeConnection = function (x0, y0, x1, y1) {
  */
 Labyrinth.setConnection = function (x0, y0, x1, y1, open) {
     if (open) {
-        Labyrinth.connections.open.add(Connection.makeConnection(x0, y0, x1, y1));
+
+        if (!Labyrinth.connections.open[Connection.makeConnection(x0, y0, x1, y1)]) {
+            Labyrinth.connections.open.push(Connection.makeConnection(x0, y0, x1, y1));
+            Labyrinth.connections.open[Connection.makeConnection(x0, y0, x1, y1)] = true;
+        }
 
         [Node.makeNode(x0, y0), Node.makeNode(x1, y1)].forEach(
             function (nextNode) {
-                if (!Labyrinth.nodes.has(nextNode)) {
-                    Labyrinth.nextNodes.add(nextNode);
-                    Labyrinth.nodes.add(nextNode);
+                if (!Labyrinth.nodes[nextNode]) {
+                    Labyrinth.nextNodes.push(nextNode);
+                    Labyrinth.nodes.push(nextNode);
                 }
             }
         );
     } else {
-        Labyrinth.connections.closed.add(Connection.makeConnection(x0, y0, x1, y1))
+        if (!Labyrinth.connections.closed[Connection.makeConnection(x0, y0, x1, y1)]) {
+            Labyrinth.connections.closed.push(Connection.makeConnection(x0, y0, x1, y1));
+            Labyrinth.connections.closed[Connection.makeConnection(x0, y0, x1, y1)] = true;
+        }
     }
 };
 
@@ -143,20 +164,20 @@ Labyrinth.setConnection = function (x0, y0, x1, y1, open) {
  */
 Labyrinth.start = function (x, y) {
     Labyrinth.addNode(x,y);
-    Labyrinth.setConnection(x,y, x + 1, y, Math.random() > 0.5);
-    Labyrinth.setConnection(x,y, x - 1, y, Math.random() > 0.5);
-    Labyrinth.setConnection(x,y, x, y + 1, Math.random() > 0.5);
-    Labyrinth.setConnection(x,y, x, y - 1, Math.random() > 0.5);
+    Labyrinth.setConnection(x,y, x + 1, y, Math.random() > 0.75);
+    Labyrinth.setConnection(x,y, x - 1, y, Math.random() > 0.75);
+    Labyrinth.setConnection(x,y, x, y + 1, Math.random() > 0.75);
+    Labyrinth.setConnection(x,y, x, y - 1, Math.random() > 0.75);
 };
 
 Labyrinth.hasConnection = function (x0, y0, x1, y1) {
-    return (Labyrinth.connections.closed.has(Connection.makeConnection(x0, y0, x1, y1))
-        || Labyrinth.connections.open.has(Connection.makeConnection(x0, y0, x1, y1)));
+    return (Labyrinth.connections.closed[Connection.makeConnection(x0, y0, x1, y1)]
+        || Labyrinth.connections.open[Connection.makeConnection(x0, y0, x1, y1)]);
 };
 
 Labyrinth.generate = function () {
-    let currentNodes = new Set(Labyrinth.nextNodes);
-    Labyrinth.nextNodes.clear();
+    let currentNodes = Labyrinth.nextNodes.slice();
+    Labyrinth.nextNodes = [];
 
     currentNodes.forEach(function (nextNode) {
         let x = nextNode.x;
