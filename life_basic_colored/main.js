@@ -26,7 +26,7 @@ Game.init = function () {
      * 0 means dead cell
      * @type {Array}
      */
-    Game.map = [];
+    Game.world = [];
 
     Game.observer = [];
     Game.observer.vx = 0;
@@ -53,7 +53,7 @@ Game.isAlive = function (x, y) {
 
     var i = y * Game.width + x;
 
-    return Game.map[i];
+    return Game.world[i];
 };
 
 function getRandomColor() {
@@ -66,9 +66,9 @@ function getRandomColor() {
 function initializeGameField() {
     for (var i = 0; i < Game.width * Game.height; i++) {
         if (Math.random() > ALIVE_DENSITY) {
-            Game.map.push(getRandomColor())
+            Game.world.push(getRandomColor())
         } else {
-            Game.map.push(0)
+            Game.world.push(0)
         }
     }
 }
@@ -171,7 +171,7 @@ Game.update = function () {
         return nextMap;
     }
 
-    Game.map = nextMap();
+    Game.world = nextMap();
 };
 
 function main(cellSize, clockSpeed) {
@@ -183,6 +183,6 @@ function main(cellSize, clockSpeed) {
 }
 
 function restart() {
-    Game.map = [];
+    Game.world = [];
     initializeGameField();
 }

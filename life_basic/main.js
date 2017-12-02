@@ -25,7 +25,7 @@ Game.init = function () {
      * 0 means dead cell
      * @type {Array}
      */
-    Game.map = [];
+    Game.world = [];
 
     Game.observer = [];
     Game.observer.vx = 0;
@@ -52,15 +52,15 @@ Game.isAlive = function (x, y) {
 
     var i = y * Game.width + x;
 
-    return Game.map[i];
+    return Game.world[i];
 };
 
 function initializeGameField() {
     for (var i = 0; i < Game.width * Game.height; i++) {
         if (Math.random() > ALIVE_DENSITY) {
-            Game.map.push(1)
+            Game.world.push(1)
         } else {
-            Game.map.push(0)
+            Game.world.push(0)
         }
     }
 }
@@ -128,7 +128,7 @@ Game.update = function () {
                 (numNeighbours(x,y) <= 3);
         }
 
-        for (var i = 0; i < Game.map.length; i++) {
+        for (var i = 0; i < Game.world.length; i++) {
             var x = i % Game.width;
             var y = (i - x) / Game.width;
 
@@ -142,7 +142,7 @@ Game.update = function () {
         return nextMap;
     }
 
-    Game.map = nextMap();
+    Game.world = nextMap();
 };
 
 function main() {
