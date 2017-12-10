@@ -192,6 +192,10 @@ function love.keypressed(key)
         player.blind = not player.blind
     end
 
+    if (love.web) then
+        love.web.javascript("console.log(" + key + ")")
+    end
+
 
     if (player.dead) then
         draw.deathMessage.x = 0.5 + math.random()
