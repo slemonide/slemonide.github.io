@@ -139,6 +139,11 @@ end
 ------------------------
 
 function love.keypressed(key)
+    if (love.web) then
+        love.web.javascript("console.log('test')")
+        love.web.javascript("console.log('" + key + "')")
+    end
+
     if key == "escape" or key == "q" then
         love.event.quit()
     elseif key == "f" then
@@ -190,10 +195,6 @@ function love.keypressed(key)
 
     if key == "space" then
         player.blind = not player.blind
-    end
-
-    if (love.web) then
-        love.web.javascript("console.log(" + key + ")")
     end
 
 
