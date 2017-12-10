@@ -3,20 +3,24 @@
 var Game = {};
 Game.world = [];
 
-CELL_SIZE = 8;
+CELL_SIZE = 1;
 MIN_DELAY = 200;
 
 Game.addFloor = function (x, y) {
-    if (!Game.world[Cell.makeFloor(x,y)]) {
-        Game.world.push(Cell.makeFloor(x, y));
-        Game.world[Cell.makeFloor(x,y)] = true;
+    let floor = Cell.makeFloor(x,y);
+
+    if (!Game.world[floor]) {
+        Game.world.push(floor);
+        Game.world[floor] = true;
     }
 };
 
 Game.addWall = function (x, y) {
-    if (!Game.world[Cell.makeWall(x,y)]) {
-        Game.world.push(Cell.makeWall(x, y));
-        Game.world[Cell.makeWall(x,y)] = true;
+    let wall = Cell.makeWall(x,y);
+
+    if (!Game.world[wall]) {
+        Game.world.push(wall);
+        Game.world[wall] = true;
     }
 };
 
@@ -114,9 +118,12 @@ Labyrinth.nextNodes = [];
  * @param y
  */
 Labyrinth.addNode = function (x, y) {
-    if (!Labyrinth.nodes[Node.makeNode(x, y)]) {
-        Labyrinth.nodes.push(Node.makeNode(x, y));
-        Labyrinth.nodes[Node.makeNode(x, y)] = true;
+    let node = Node.makeNode(x, y);
+
+    if (!Labyrinth.nodes[node]) {
+        Labyrinth.nodes.push(node);
+        Labyrinth.nextNodes.push(node);
+        Labyrinth.nodes[node] = true;
     }
 };
 
@@ -164,10 +171,10 @@ Labyrinth.setConnection = function (x0, y0, x1, y1, open) {
  */
 Labyrinth.start = function (x, y) {
     Labyrinth.addNode(x,y);
-    Labyrinth.setConnection(x,y, x + 1, y, Math.random() > 0.75);
-    Labyrinth.setConnection(x,y, x - 1, y, Math.random() > 0.75);
-    Labyrinth.setConnection(x,y, x, y + 1, Math.random() > 0.75);
-    Labyrinth.setConnection(x,y, x, y - 1, Math.random() > 0.75);
+    //Labyrinth.setConnection(x,y, x + 1, y, Math.random() > 0.75);
+    //Labyrinth.setConnection(x,y, x - 1, y, Math.random() > 0.75);
+    //Labyrinth.setConnection(x,y, x, y + 1, Math.random() > 0.75);
+    //Labyrinth.setConnection(x,y, x, y - 1, Math.random() > 0.75);
 };
 
 Labyrinth.hasConnection = function (x0, y0, x1, y1) {
@@ -207,7 +214,7 @@ Labyrinth.generate = function () {
  * Actually add the cells to the world
  */
 Labyrinth.write = function () {
-    Labyrinth.nodes.forEach(function (node) {
+    Labyrinth.nextNodes.forEach(function (node) {
         Game.addFloor(node.x * 2, node.y * 2);
 
         Game.addWall(node.x * 2 + 1, node.y * 2 + 1);
@@ -233,6 +240,8 @@ function main() {
     Labyrinth.write();
 
     Game._intervalId = setInterval(Game.run, 1000 / Game.fps);
+
+    setInterval(generate, 1);
 }
 
 function generate() {
