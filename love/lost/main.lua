@@ -10,7 +10,18 @@ require('coins')
 ------------------------
 -- Load love
 ------------------------
+
+function loadWeb()
+    if (not love.graphics.origin) then
+        love.graphics.origin = function()
+
+        end
+    end
+end
+
 function love.load()
+    loadWeb()
+
     math.randomseed(os.time())
     textures.load()
 
