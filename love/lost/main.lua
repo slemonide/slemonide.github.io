@@ -16,9 +16,6 @@ function loadWeb()
         love.graphics.origin = function()
 
         end
-        love.graphics.translate = function()
-
-        end
     end
 end
 
@@ -140,8 +137,7 @@ end
 
 function love.keypressed(key)
     if (love.web) then
-        love.web.javascript("console.log('test')")
-        love.web.javascript("console.log('" + key + "')")
+        love.web.javascript("console.log('Key pressed: " + key + "')")
     end
 
     if key == "escape" or key == "q" then
