@@ -145,7 +145,7 @@ function love.keypressed(key)
         player.x = player.x + 1
     end
 
-    if key == "space" then
+    if key == "space" or key == " " then
         player.blind = not player.blind
     end
 
