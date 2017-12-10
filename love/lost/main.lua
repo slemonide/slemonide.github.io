@@ -20,7 +20,6 @@ function loadWeb()
 end
 
 function love.load()
-    lastKey = ""
     loadWeb()
 
     math.randomseed(os.time())
@@ -64,7 +63,6 @@ local function updateOrigin()
 end
 
 function love.draw()
-    love.graphics.print("Key: " .. lastKey, 10, 2, 0, 2, 2)
     if (not player.dead) then
         updateOrigin();
 
@@ -138,7 +136,9 @@ end
 ------------------------
 
 function love.keypressed(key)
-    lastKey = key;
+    if (love.web) then
+        love.web.javascript("key = " + key + ";")
+    end
 
     if key == "escape" or key == "q" then
         love.event.quit()
