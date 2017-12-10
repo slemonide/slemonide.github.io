@@ -137,7 +137,12 @@ end
 
 function love.keypressed(key)
     if (love.web) then
-        love.web.javascript("key = " + key + ";")
+        love.web.javascript("console.log('key pressed')")
+        love.web.javascript("console.log('" .. key .. "')")
+    end
+
+    if key == "d" then
+        player.x = player.x + 1
     end
 
     if key == "escape" or key == "q" then
