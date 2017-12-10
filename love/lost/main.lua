@@ -137,7 +137,8 @@ end
 
 function love.keypressed(key)
     if (love.web) then
-        love.web.javascript("console.log('Key pressed: " + key + "')")
+        print(key)
+        --love.web.javascript("console.log('Key pressed: " + key + "')")
     end
 
     if key == "escape" or key == "q" then
