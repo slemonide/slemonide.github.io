@@ -145,6 +145,10 @@ function love.keypressed(key)
         player.x = player.x + 1
     end
 
+    if key == "space" then
+        player.blind = not player.blind
+    end
+
     if key == "escape" or key == "q" then
         love.event.quit()
     elseif key == "f" then
@@ -175,7 +179,7 @@ function love.keypressed(key)
         movement = false
     end
 
-    if movement and nodes.isWalkable(movement.x, movement.y) and player.blind then
+    if movement then --and nodes.isWalkable(movement.x, movement.y) and player.blind then
         player.x = movement.x
         player.y = movement.y
 
@@ -192,10 +196,6 @@ function love.keypressed(key)
             player.coinsCollected = player.coinsCollected + 1
             coins[movement.x][movement.y] = false
         end
-    end
-
-    if key == "space" then
-        player.blind = not player.blind
     end
 
 
