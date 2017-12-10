@@ -16,6 +16,9 @@ function loadWeb()
         love.graphics.origin = function()
 
         end
+        love.graphics.translate = function()
+
+        end
     end
 end
 
