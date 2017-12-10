@@ -138,32 +138,6 @@ end
 -- Keypressed
 ------------------------
 
-function getMovement(key)
-    if key == "up" or key == "w" then
-        return {
-            x = player.x,
-            y = player.y - 1
-        }
-    elseif key == "down" or key == "s" then
-        return {
-            x = player.x,
-            y = player.y + 1
-        }
-    elseif key == "left" or key == "a" then
-        return {
-            x = player.x - 1,
-            y = player.y
-        }
-    elseif key == "right" or key == "d" then
-        return {
-            x = player.x + 1,
-            y = player.y
-        }
-    else
-        return false
-    end
-end
-
 function love.keypressed(key)
     if key == "escape" or key == "q" then
         love.event.quit()
@@ -171,7 +145,29 @@ function love.keypressed(key)
         love.window.setFullscreen(not (love.window or {}).getFullscreen())
     end
 
-    local movement = getMovement(key)
+    if key == "up" or key == "w" then
+        movement = {
+            x = player.x,
+            y = player.y - 1
+        }
+    elseif key == "down" or key == "s" then
+        movement = {
+            x = player.x,
+            y = player.y + 1
+        }
+    elseif key == "left" or key == "a" then
+        movement = {
+            x = player.x - 1,
+            y = player.y
+        }
+    elseif key == "right" or key == "d" then
+        movement = {
+            x = player.x + 1,
+            y = player.y
+        }
+    else
+        movement = false
+    end
 
     if movement and nodes.isWalkable(movement.x, movement.y) and player.blind then
         player.x = movement.x
