@@ -3,7 +3,7 @@
 var Game = {};
 Game.world = [];
 
-CELL_SIZE = 1;
+CELL_SIZE = 10;
 MIN_DELAY = 200;
 
 Game.addFloor = function (x, y) {
@@ -241,7 +241,7 @@ function main() {
 
     Game._intervalId = setInterval(Game.run, 1000 / Game.fps);
 
-    setInterval(generate, 1);
+    //setInterval(generate, 1);
 }
 
 function generate() {
